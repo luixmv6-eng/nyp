@@ -1,0 +1,272 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Nuestro Árbol — hoja de estilos skeuomórfica
+   Todas las texturas provienen del diseño de Google Stitch.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: dark;
+  --leather-deep: #14110f;
+  --aged-parchment: #e8dfcc;
+  --tarnished-brass: #7a623e;
+}
+
+html,
+body {
+  background-color: var(--leather-deep);
+  color: #e6e1e0;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+@layer components {
+  /* ── Cuero negro texturizado (fondo de toda la app) ─────────────────── */
+  .leather-texture {
+    background-color: #141313;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8);
+  }
+
+  .leather-radial {
+    background-color: #14110f;
+    background-image: radial-gradient(circle at 50% 50%, rgba(35, 31, 22, 0.8) 0%, rgba(20, 17, 15, 1) 100%);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+  }
+
+  /* Tapa del álbum: cuero más marrón y con relieve */
+  .album-cover {
+    background-color: #2a1f1a;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+    box-shadow:
+      20px 20px 60px rgba(0, 0, 0, 0.9),
+      inset 5px 5px 15px rgba(255, 255, 255, 0.05),
+      inset -5px -5px 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid #3a2a24;
+  }
+
+  .scratch-overlay {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxmaWx0ZXIgaWQ9Im4iPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjUiIG51bU9jdGF2ZXM9IjEiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbikiIG9wYWNpdHk9IjAuMDUiLz48L3N2Zz4=");
+  }
+
+  /* ── Viñeta ──────────────────────────────────────────────────────────── */
+  .vignette-inset {
+    box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.95);
+  }
+
+  .vignette-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.85) 100%);
+    pointer-events: none;
+    z-index: 40;
+  }
+
+  /* ── Foto impresa (marco crema tipo polaroid) ────────────────────────── */
+  .polaroid-frame {
+    background-color: #e8dfcc;
+    box-shadow:
+      2px 4px 16px rgba(0, 0, 0, 0.8),
+      inset 0 0 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .polaroid {
+    background-color: #e8dfcc;
+    box-shadow:
+      4px 10px 20px rgba(0, 0, 0, 0.7),
+      inset 0 0 5px rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .polaroid:hover {
+    box-shadow:
+      8px 16px 30px rgba(0, 0, 0, 0.8),
+      inset 0 0 5px rgba(255, 255, 255, 0.8);
+  }
+
+  .polaroid-img-container {
+    position: relative;
+    overflow: hidden;
+    background: #111;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .polaroid-caption {
+    font-style: italic;
+    color: #2b2622;
+    text-align: center;
+    opacity: 0.85;
+  }
+
+  /* Tratamiento fotográfico sepia/vintage del diseño */
+  .photo-vintage {
+    filter: sepia(0.4) contrast(1.2) brightness(0.9);
+  }
+
+  /* ── Capa de papel (fondo de la galería) ─────────────────────────────── */
+  .paper-layer {
+    background-color: #2b2622;
+    box-shadow:
+      inset 0 0 60px rgba(0, 0, 0, 0.9),
+      0 15px 40px rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .paper-texture {
+    background-color: #e8dfcc;
+  }
+
+  /* ── Metales: latón, bronce, oro ─────────────────────────────────────── */
+  .metallic-hardware {
+    background: linear-gradient(135deg, #e6c27a 0%, #d4af37 50%, #8a6327 100%);
+    box-shadow:
+      inset 1px 1px 2px rgba(255, 255, 255, 0.5),
+      inset -1px -1px 3px rgba(0, 0, 0, 0.6),
+      2px 2px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  .gold-emboss {
+    color: #d4af37;
+    background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 50%, #8a6327 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .aged-metal {
+    background: linear-gradient(135deg, #e1c293 0%, #7a623e 50%, #3a2f11 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .aged-bronze-fab {
+    background: linear-gradient(135deg, #7a623e 0%, #3d2b1f 100%);
+    box-shadow:
+      2px 4px 12px rgba(0, 0, 0, 0.7),
+      inset 1px 1px 3px rgba(255, 255, 255, 0.2),
+      inset -1px -1px 5px rgba(0, 0, 0, 0.6);
+  }
+
+  .bronze-button {
+    background: linear-gradient(135deg, #7a623e 0%, #524525 100%);
+    box-shadow:
+      inset 1px 1px 2px rgba(255, 255, 255, 0.2),
+      inset -1px -1px 4px rgba(0, 0, 0, 0.6),
+      2px 4px 8px rgba(0, 0, 0, 0.5);
+    text-shadow: -1px -1px 1px rgba(255, 255, 255, 0.1), 1px 1px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  .bronze-button:active:not(:disabled) {
+    box-shadow:
+      inset 2px 2px 5px rgba(0, 0, 0, 0.6),
+      inset -1px -1px 2px rgba(255, 255, 255, 0.1),
+      1px 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  .bronze-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .engraved-icon {
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3), 0 -1px 0 rgba(0, 0, 0, 0.7);
+  }
+
+  .aged-icon {
+    color: #7a623e;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.9)) drop-shadow(-1px -1px 0 rgba(255, 255, 255, 0.1));
+  }
+
+  .spine-crease {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 0, 0, 0.6) 20%,
+      rgba(0, 0, 0, 0.8) 50%,
+      rgba(0, 0, 0, 0.6) 80%,
+      transparent
+    );
+  }
+
+  /* ── Campos de formulario tipo tinta sobre papel ─────────────────────── */
+  .ink-line {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(43, 38, 34, 0.3);
+    color: #2b2622;
+    border-radius: 0;
+  }
+
+  .ink-line:focus {
+    outline: none;
+    border-bottom: 2px solid #544827;
+    box-shadow: none;
+  }
+
+  .ink-line::placeholder {
+    color: rgba(43, 38, 34, 0.4);
+    font-style: italic;
+  }
+
+  .ink-line::-webkit-calendar-picker-indicator {
+    filter: invert(0.15);
+    cursor: pointer;
+  }
+
+  /* ── Esquineros de latón (photo corners) ─────────────────────────────── */
+  .corner-bracket {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border: 3px solid #7a623e;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6), inset 1px 1px 2px rgba(255, 255, 255, 0.2);
+    z-index: 10;
+  }
+  .corner-tl { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+  .corner-tr { top: -3px; right: -3px; border-left: none; border-bottom: none; }
+  .corner-bl { bottom: -3px; left: -3px; border-right: none; border-top: none; }
+  .corner-br { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+
+  .gold-bracket {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #7a623e;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+  }
+  .bracket-tl { top: 4px; left: 4px; border-right: none; border-bottom: none; }
+  .bracket-tr { top: 4px; right: 4px; border-left: none; border-bottom: none; }
+  .bracket-bl { bottom: 4px; left: 4px; border-right: none; border-top: none; }
+  .bracket-br { bottom: 4px; right: 4px; border-left: none; border-top: none; }
+
+  /* ── Líneas del árbol (SVG) ──────────────────────────────────────────── */
+  .tree-line {
+    stroke: #7a623e;
+    stroke-width: 1.5;
+    fill: none;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
+  }
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #14110f; }
+::-webkit-scrollbar-thumb { background: #3d2b1f; border-radius: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
