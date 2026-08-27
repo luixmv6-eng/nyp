@@ -83,7 +83,7 @@ export default function AppShell({
               onClick={() => setDrawerOpen(false)}
             />
             <motion.nav
-              className="pt-safe pb-safe fixed inset-y-0 left-0 z-[80] flex h-full w-80 max-w-[85vw] flex-col rounded-r-lg bg-surface-container px-6 py-6 shadow-2xl shadow-sepia-shadow"
+              className="py-safe-6 fixed inset-y-0 left-0 z-[80] flex h-full w-80 max-w-[85vw] flex-col rounded-r-lg bg-surface-container px-6 shadow-2xl shadow-sepia-shadow"
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}

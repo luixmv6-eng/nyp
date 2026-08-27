@@ -47,8 +47,11 @@ export default function LogoFirstRun() {
             exit={{ opacity: 0 }}
             onClick={dismiss}
           />
+          {/* El centrado va con flex, no con -translate-y-1/2: Framer Motion
+              escribe `transform` en línea y pisaría la clase de Tailwind. */}
+          <div className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-6">
           <motion.div
-            className="fixed inset-x-6 top-1/2 z-[100] mx-auto max-w-sm -translate-y-1/2"
+            className="pointer-events-auto my-auto w-full max-w-sm"
             initial={{ opacity: 0, scale: 0.94, rotate: -1 }}
             animate={{ opacity: 1, scale: 1, rotate: -1 }}
             exit={{ opacity: 0, scale: 0.94 }}
@@ -84,6 +87,7 @@ export default function LogoFirstRun() {
               </div>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

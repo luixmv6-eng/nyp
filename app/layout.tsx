@@ -3,6 +3,7 @@ import { Libre_Caslon_Text, EB_Garamond } from 'next/font/google';
 import './globals.css';
 import { getLogoVersion, logoPublicUrl } from '@/lib/logo';
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
+import AlbumIntro from '@/components/AlbumIntro';
 
 const caslon = Libre_Caslon_Text({
   subsets: ['latin'],
@@ -60,7 +61,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const version = await getLogoVersion();
+
   return (
     <html lang="es" className={`dark ${caslon.variable} ${garamond.variable}`}>
       <head>
@@ -71,9 +74,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
         />
+        {/*
+          Se ejecuta antes de pintar nada. Marca que toca abrir el álbum para
+          que el telón de globals.css tape la pantalla desde el primer
+          fotograma; si no, se vería el contenido durante el segundo que tarda
+          React en hidratarse y la portada llegaría tarde.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(sessionStorage.getItem('arbol:intro')!=='1'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.setAttribute('data-intro','playing')}}catch(e){}",
+          }}
+        />
       </head>
       <body className="font-body-md text-body-md bg-leather-deep text-on-background">
-        {children}
+        {/* El contenido vive dentro de .app-canvas para que la apertura del
+            álbum pueda acercarse a él. Ver globals.css. */}
+        <div className="app-canvas">{children}</div>
+        <AlbumIntro logoUrl={logoPublicUrl(512, version)} />
         <ServiceWorkerRegister />
       </body>
     </html>

@@ -10,3 +10,6 @@ npm-debug.log*
 next-env.d.ts
 .vercel
 tsconfig.tsbuildinfo
+
+# capturas de la prueba de responsive
+scripts/screenshots

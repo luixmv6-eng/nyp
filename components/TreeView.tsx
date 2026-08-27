@@ -78,7 +78,7 @@ export default function TreeView({ photos }: { photos: PhotoWithUrl[] }) {
 
               <Link
                 href={`/foto/${photo.id}`}
-                className="relative z-10 block w-[46%] max-w-[220px] transition-transform duration-300 hover:z-20 hover:scale-105 active:scale-95"
+                className="relative z-10 block w-[46%] min-w-[112px] max-w-[220px] transition-transform duration-300 hover:z-20 hover:scale-105 active:scale-95"
               >
                 <Polaroidish
                   src={photo.thumbUrl}

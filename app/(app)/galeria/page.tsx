@@ -55,7 +55,7 @@ export default async function GaleriaPage() {
                   </p>
                 </header>
 
-                <div className="relative z-20 grid grid-cols-1 gap-12 sm:grid-cols-2 md:gap-16 lg:grid-cols-3">
+                <div className="relative z-20 grid grid-cols-1 gap-12 px-3 sm:grid-cols-2 sm:px-0 md:gap-16 lg:grid-cols-3">
                   {chapterPhotos.map((photo, index) => (
                     <Link
                       key={photo.id}
@@ -67,7 +67,7 @@ export default async function GaleriaPage() {
                         seed={photo.id}
                         caption={photo.caption?.trim() || formatLongDate(photo.photo_date)}
                         brackets={index % 3 === 0 ? 'diagonal' : 'none'}
-                        maxRotation={5}
+                        maxRotation={3.5}
                         priority={chapterIndex === 0 && index < 3}
                       />
                     </Link>

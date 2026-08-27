@@ -11,7 +11,7 @@ export default async function AjustesPage() {
 
   return (
     <main className="flex flex-col items-center px-6 pb-16 pt-8">
-      <h2 className="mb-8 text-center font-display-lg-mobile text-display-lg-mobile text-secondary drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+      <h2 className="mb-8 text-center font-display-lg text-display-fluid text-secondary drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
         Ajustes del Libro
       </h2>
 

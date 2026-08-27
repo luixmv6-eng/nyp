@@ -103,7 +103,7 @@ export default function UploadForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full flex-col items-center">
-      <h2 className="mb-6 text-center font-display-lg-mobile text-display-lg-mobile text-secondary drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+      <h2 className="mb-6 text-center font-display-lg text-display-fluid text-secondary drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
         Subir un Recuerdo
       </h2>
 

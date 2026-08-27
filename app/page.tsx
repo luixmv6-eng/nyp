@@ -1,10 +1,10 @@
-import SplashCover from '@/components/SplashCover';
-import { getLogoVersion, logoPublicUrl } from '@/lib/logo';
+import { redirect } from 'next/navigation';
 
-// La portada se pinta en cada arranque, así que no la cacheamos de más.
-export const revalidate = 3600;
-
-export default async function SplashPage() {
-  const version = await getLogoVersion();
-  return <SplashCover logoUrl={logoPublicUrl(512, version)} />;
+/**
+ * `/` es el start_url de la PWA. No pinta nada: manda directo al árbol.
+ * La apertura del álbum la hace <AlbumIntro>, que vive en el layout raíz y se
+ * superpone a todo, así que esta navegación ocurre por debajo de la tapa.
+ */
+export default function Home() {
+  redirect('/arbol');
 }

@@ -74,7 +74,7 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
   return (
     <main className="leather-radial vignette-inset relative flex min-h-[100dvh] w-full flex-col overflow-x-hidden">
       {/* ── Acciones ───────────────────────────────────────────────────── */}
-      <nav className="pt-safe px-edge-safe fixed top-0 z-50 flex w-full items-center justify-between bg-gradient-to-b from-leather-deep to-transparent pb-4">
+      <nav className="pt-safe-4 px-edge-safe fixed top-0 z-50 flex w-full items-center justify-between bg-gradient-to-b from-leather-deep to-transparent pb-4">
         <button
           type="button"
           onClick={() => router.back()}
@@ -107,7 +107,7 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
       {/* ── La foto ────────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col items-center justify-center px-8 pb-40 pt-[calc(6rem+env(safe-area-inset-top,0px))]">
         <motion.div
-          className="group relative z-10 w-full max-w-[400px] md:max-w-[460px]"
+          className="group relative z-10 w-full max-w-[min(400px,52vh)] md:max-w-[min(460px,62vh)]"
           initial={{ opacity: 0, y: 16, rotate: rotation }}
           animate={{ opacity: 1, y: 0, rotate: rotation }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -202,7 +202,7 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.25 }}
           >
-            <p className="aged-metal mb-2 font-display-lg-mobile text-display-lg-mobile italic drop-shadow-md">
+            <p className="aged-metal mb-2 font-display-lg text-display-fluid italic drop-shadow-md">
               {formatLongDate(photo.photo_date)}
             </p>
             {photo.caption && (
@@ -229,8 +229,11 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
               exit={{ opacity: 0 }}
               onClick={() => !busy && setConfirming(false)}
             />
+            {/* Centrado con flex: Framer Motion escribe transform en línea
+                y pisaría un -translate-y-1/2 de Tailwind. */}
+            <div className="pointer-events-none fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto p-6">
             <motion.div
-              className="fixed inset-x-6 top-1/2 z-[100] mx-auto max-w-sm -translate-y-1/2"
+              className="pointer-events-auto my-auto w-full max-w-sm"
               initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.94 }}
@@ -264,6 +267,7 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
                 </div>
               </div>
             </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>

@@ -34,7 +34,87 @@ body {
    isla dinámica del iPhone, así que hay que devolverle ese margen a mano.
    ══════════════════════════════════════════════════════════════════════════ */
 
+/* ══════════════════════════════════════════════════════════════════════════
+   Apertura del álbum
+
+   Mientras la tapa está cerrada, el contenido de debajo espera encogido y en
+   penumbra. Al abrirse, crece hasta su tamaño real a la vez que la portada se
+   aleja: es lo que da la sensación de entrar en el álbum en vez de un corte.
+
+   Sin el atributo data-intro (carga normal) esto no hace nada.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/*
+ * OJO: aquí NO puede ir `will-change: transform`.
+ * Un `transform` o un `filter` activos convierten al elemento en el marco de
+ * referencia de sus descendientes `position: fixed`, y `will-change` hace lo
+ * mismo de forma permanente. Con él, la barra inferior, el botón flotante y
+ * los modales dejaban de anclarse a la pantalla y se anclaban a la página.
+ *
+ * Por eso el transform y el filter sólo existen mientras dura la apertura
+ * (data-intro="playing"). Al terminar desaparecen y todo vuelve a anclarse
+ * a la ventana.
+ */
+.app-canvas {
+  transition:
+    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 900ms ease-out;
+  transform-origin: center center;
+}
+
+html[data-intro='playing'] .app-canvas {
+  transform: scale(0.92);
+  filter: brightness(0.4) saturate(0.75);
+}
+
+/*
+ * Telón. El script en línea del <head> marca data-intro="playing" ANTES de
+ * que se pinte nada, así que este cuero tapa la pantalla desde el primer
+ * fotograma. Sin él se veía el álbum durante el segundo que tarda React en
+ * hidratarse, y sólo después aparecía la portada: justo al revés.
+ *
+ * Desaparece en cuanto empieza la apertura ("done"), momento en el que la
+ * portada animada (z-200) ya está por encima.
+ */
+html[data-intro='playing'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background-color: #141313;
+  pointer-events: none;
+}
+
+/* Mientras la portada está encima, nada de debajo debe poder tocarse. */
+html[data-intro='playing'] .app-canvas {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-canvas,
+  html[data-intro='playing'] .app-canvas {
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
 @layer utilities {
+  /* Títulos grandes que se adaptan al ancho real del dispositivo, para que no
+     se corten en pantallas estrechas ni se queden pequeños en tablet. */
+  .text-display-fluid {
+    font-size: clamp(1.5rem, 7.5vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+
+  .text-headline-fluid {
+    font-size: clamp(1.25rem, 5.5vw, 1.75rem);
+    line-height: 1.25;
+    font-weight: 600;
+  }
+
   .pt-safe {
     padding-top: env(safe-area-inset-top, 0px);
   }
@@ -49,18 +129,28 @@ body {
   }
 
   /* Cabecera: 4rem útiles POR DEBAJO de la isla dinámica.
-     content-box para que el padding se sume al alto y no lo coma. */
+     Con border-box (el de Tailwind) el alto incluye el padding, así que
+     sumarlo en el calc deja exactamente 4rem de contenido. Ojo: NO usar
+     content-box aquí, porque entonces el padding lateral se suma también al
+     ancho y la cabecera se sale de la pantalla. */
   .h-header {
-    box-sizing: content-box;
-    height: 4rem;
+    height: calc(4rem + env(safe-area-inset-top, 0px));
     padding-top: env(safe-area-inset-top, 0px);
   }
 
   /* Nav inferior: 5rem útiles por encima de la barra de gestos. */
   .h-bottom-nav {
-    box-sizing: content-box;
-    height: 5rem;
+    height: calc(5rem + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Insets que se SUMAN al espaciado del diseño, en vez de sustituirlo. */
+  .pt-safe-4 {
+    padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+  }
+  .py-safe-6 {
+    padding-top: calc(1.5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
   }
 
   /* Hueco que deben dejar los contenidos para no quedar bajo el nav. */

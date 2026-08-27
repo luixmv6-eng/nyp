@@ -201,6 +201,43 @@ supabase/schema.sql       Todo el backend en un archivo
 scripts/generate-icons.mjs
 ```
 
+## Comprobaciones
+
+```bash
+npm run check        # conexión con Supabase (tablas, buckets, permisos)
+npm run responsive   # abre la app en 7 dispositivos y busca recortes
+```
+
+`npm run responsive` necesita la app corriendo (`npm run build && npm start`) y
+usa un Chromium real. Comprueba en cada pantalla y cada tamaño que no haya
+scroll horizontal, que nada se salga del viewport ni quede recortado por un
+contenedor, que la barra inferior esté pegada a la ventana y que el título no
+caiga bajo la isla dinámica. Deja una captura de cada combinación en
+`scripts/screenshots/`.
+
+## La apertura del álbum
+
+La portada no es una página: es una capa que vive en el layout raíz. Eso es lo
+que hace que la transición no dé un salto — la navegación ocurre por debajo de
+la tapa cerrada, así que cuando ésta se abre el álbum ya está montado detrás y
+sólo hay que acercarse a él.
+
+Tres piezas coordinadas por el atributo `data-intro` del `<html>`:
+
+1. Un script en línea en el `<head>` lo marca como `playing` **antes de pintar
+   nada**, y un telón de cuero (`body::before`) tapa la pantalla desde el primer
+   fotograma. Sin eso se vería el álbum durante el segundo que tarda React en
+   hidratarse.
+2. `AlbumIntro` dibuja la tapa y la gira sobre su lomo.
+3. Al pasar a `done`, la tapa se aleja y se disuelve mientras `.app-canvas`
+   crece de `scale(0.92)` a su tamaño real. Los dos movimientos se solapan.
+
+⚠️ `.app-canvas` **no puede llevar `will-change: transform`**. Un `transform`,
+un `filter` o un `will-change` activos convierten al elemento en el marco de
+referencia de sus descendientes `position: fixed`, y la barra inferior, el botón
+flotante y los modales dejan de anclarse a la pantalla. Por eso el `transform` y
+el `filter` sólo existen mientras dura la apertura.
+
 ## Cómo se cargan rápido las fotos
 
 Tres detalles que no son obvios leyendo el código:

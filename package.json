@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "icons": "node scripts/generate-icons.mjs",
-    "check": "node --env-file=.env.local scripts/check-supabase.mjs"
+    "check": "node --env-file=.env.local scripts/check-supabase.mjs",
+    "responsive": "node --env-file=.env.local scripts/responsive-check.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
@@ -24,6 +25,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.20",
+    "playwright": "^1.62.1",
     "postcss": "^8.4.47",
     "sharp": "^0.33.5",
     "tailwindcss": "^3.4.14",
