@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import type { PhotoWithUrl } from '@/lib/photos';
 import { formatLongDate, stableRotation, todayLocalISO } from '@/lib/utils';
 import Icon from '@/components/Icon';
+import PhotoImage from '@/components/PhotoImage';
 
 /**
  * Detalle del recuerdo: la foto ampliada sobre el cuero, con la fecha y la
@@ -73,7 +74,7 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
   return (
     <main className="leather-radial vignette-inset relative flex min-h-[100dvh] w-full flex-col overflow-x-hidden">
       {/* ── Acciones ───────────────────────────────────────────────────── */}
-      <nav className="fixed top-0 z-50 flex w-full items-center justify-between bg-gradient-to-b from-leather-deep to-transparent p-4 px-6 pt-edge-wear-safe">
+      <nav className="pt-safe px-edge-safe fixed top-0 z-50 flex w-full items-center justify-between bg-gradient-to-b from-leather-deep to-transparent pb-4">
         <button
           type="button"
           onClick={() => router.back()}
@@ -104,7 +105,7 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
       </nav>
 
       {/* ── La foto ────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col items-center justify-center px-8 pb-40 pt-24">
+      <div className="flex flex-1 flex-col items-center justify-center px-8 pb-40 pt-[calc(6rem+env(safe-area-inset-top,0px))]">
         <motion.div
           className="group relative z-10 w-full max-w-[400px] md:max-w-[460px]"
           initial={{ opacity: 0, y: 16, rotate: rotation }}
@@ -118,11 +119,17 @@ export default function PhotoDetail({ photo }: { photo: PhotoWithUrl }) {
           <span className="absolute -bottom-2 -right-2 z-20 h-6 w-6 border-b-2 border-r-2 border-tarnished-brass opacity-90 shadow-[-1px_-1px_2px_rgba(0,0,0,0.6)]" />
 
           <div className="polaroid-frame relative flex aspect-[3/4] w-full flex-col items-center justify-start overflow-hidden rounded-sm p-photo-gutter pb-[72px]">
-            <div className="relative h-full w-full overflow-hidden border border-black/10 shadow-inner">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.signedUrl}
+            <div
+              className="relative h-full w-full overflow-hidden border border-black/10 bg-cover bg-center shadow-inner"
+              // La miniatura (ya cacheada por el árbol o la galería) se pinta
+              // difuminada de fondo mientras baja la foto grande. Así el hueco
+              // nunca está vacío y la espera se nota mucho menos.
+              style={{ backgroundImage: `url(${photo.thumbUrl})` }}
+            >
+              <PhotoImage
+                src={photo.url}
                 alt={photo.caption ?? 'Recuerdo'}
+                priority
                 className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
               />
             </div>

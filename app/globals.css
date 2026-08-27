@@ -26,6 +26,54 @@ body {
   min-height: 100dvh;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   Áreas seguras (notch / isla dinámica / barra de gestos)
+
+   El viewport va con `viewportFit: cover` para que el cuero llegue a los
+   bordes de la pantalla. El precio es que el contenido pasa por DEBAJO de la
+   isla dinámica del iPhone, así que hay que devolverle ese margen a mano.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Márgenes laterales del diseño (1rem) respetando el borde curvo. */
+  .px-edge-safe {
+    padding-left: calc(1rem + env(safe-area-inset-left, 0px));
+    padding-right: calc(1rem + env(safe-area-inset-right, 0px));
+  }
+
+  /* Cabecera: 4rem útiles POR DEBAJO de la isla dinámica.
+     content-box para que el padding se sume al alto y no lo coma. */
+  .h-header {
+    box-sizing: content-box;
+    height: 4rem;
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Nav inferior: 5rem útiles por encima de la barra de gestos. */
+  .h-bottom-nav {
+    box-sizing: content-box;
+    height: 5rem;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Hueco que deben dejar los contenidos para no quedar bajo el nav. */
+  .pb-bottom-nav {
+    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Botón flotante, justo encima del nav. */
+  .bottom-fab {
+    bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 @layer components {
   /* ── Cuero negro texturizado (fondo de toda la app) ─────────────────── */
   .leather-texture {

@@ -1,19 +1,13 @@
 import LogoSettings from '@/components/LogoSettings';
-import { createClient } from '@/lib/supabase/server';
+import { countPhotos } from '@/lib/photos';
 import { getLogoVersion, logoPublicUrl } from '@/lib/logo';
+import { APP_VERSION } from '@/lib/version';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Ajustes del Libro · Nuestro Árbol' };
 
 export default async function AjustesPage() {
-  const supabase = await createClient();
-
-  const { count } = await supabase
-    .from('photos')
-    .select('id', { count: 'exact', head: true })
-    .is('deleted_at', null);
-
-  const version = await getLogoVersion();
+  const [count, version] = await Promise.all([countPhotos(), getLogoVersion()]);
 
   return (
     <main className="flex flex-col items-center px-6 pb-16 pt-8">
@@ -31,11 +25,15 @@ export default async function AjustesPage() {
         <dl className="mt-4 space-y-3 font-body-md text-body-md text-on-surface">
           <div className="flex items-baseline justify-between gap-4">
             <dt className="opacity-60">Recuerdos</dt>
-            <dd className="text-secondary">{count ?? 0}</dd>
+            <dd className="text-secondary">{count}</dd>
           </div>
           <div className="flex items-baseline justify-between gap-4">
             <dt className="opacity-60">Entrada</dt>
             <dd className="text-secondary">Sin contraseña</dd>
+          </div>
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="opacity-60">Versión</dt>
+            <dd className="text-secondary">{APP_VERSION}</dd>
           </div>
         </dl>
         <p className="mt-5 border-t border-outline-variant/20 pt-4 font-body-sm text-body-sm italic text-outline/50">
@@ -43,6 +41,10 @@ export default async function AjustesPage() {
           pueden recuperar desde el panel.
         </p>
       </div>
+
+      <p className="mt-10 text-center font-label-caps text-label-caps uppercase tracking-wider text-outline/30">
+        Nuestro Árbol · versión {APP_VERSION}
+      </p>
     </main>
   );
 }

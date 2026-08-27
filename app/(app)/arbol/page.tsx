@@ -17,7 +17,7 @@ export default async function ArbolPage() {
       <Link
         href="/subir"
         aria-label="Añadir un recuerdo"
-        className="aged-bronze-fab group fixed bottom-24 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-circle transition-transform hover:scale-105 active:scale-95"
+        className="aged-bronze-fab bottom-fab group fixed right-6 z-40 flex h-14 w-14 items-center justify-center rounded-circle transition-transform hover:scale-105 active:scale-95"
       >
         <Icon
           name="add"

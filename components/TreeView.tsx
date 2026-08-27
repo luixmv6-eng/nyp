@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { PhotoWithUrl } from '@/lib/photos';
 import { stableRotation, yearOf } from '@/lib/utils';
 import Icon from '@/components/Icon';
+import PhotoImage from '@/components/PhotoImage';
 
 /**
  * El árbol de recuerdos: un tronco de latón que sube por el centro y ramas
@@ -80,9 +81,10 @@ export default function TreeView({ photos }: { photos: PhotoWithUrl[] }) {
                 className="relative z-10 block w-[46%] max-w-[220px] transition-transform duration-300 hover:z-20 hover:scale-105 active:scale-95"
               >
                 <Polaroidish
-                  src={photo.signedUrl}
+                  src={photo.thumbUrl}
                   seed={photo.id}
                   label={photo.caption?.trim() || yearOf(photo.photo_date)}
+                  priority={index >= chronological.length - 3}
                 />
               </Link>
             </li>
@@ -108,7 +110,17 @@ export default function TreeView({ photos }: { photos: PhotoWithUrl[] }) {
 }
 
 /** Variante compacta de la foto impresa, con la etiqueta en cursiva del diseño. */
-function Polaroidish({ src, seed, label }: { src: string; seed: string; label: string }) {
+function Polaroidish({
+  src,
+  seed,
+  label,
+  priority = false,
+}: {
+  src: string;
+  seed: string;
+  label: string;
+  priority?: boolean;
+}) {
   const rotation = stableRotation(seed, 4);
   return (
     <div
@@ -116,12 +128,10 @@ function Polaroidish({ src, seed, label }: { src: string; seed: string; label: s
       style={{ transform: `rotate(${rotation}deg)` }}
     >
       <div className="polaroid-img-container aspect-square w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <PhotoImage
           src={src}
           alt={label}
-          loading="lazy"
-          decoding="async"
+          priority={priority}
           className="h-full w-full object-cover"
           style={{ filter: 'sepia(0.5) contrast(1.2) brightness(0.9)' }}
         />

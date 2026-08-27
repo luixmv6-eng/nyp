@@ -39,43 +39,92 @@ function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality?: number)
   });
 }
 
+/** Formatos que cualquier navegador sabe pintar. HEIC/HEIF no está: sólo Safari. */
+const WEB_SAFE = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+
+/** Reescala un bitmap a JPEG dentro de un canvas. */
+async function toJpeg(
+  bitmap: ImageBitmap | HTMLImageElement,
+  maxSide: number,
+  quality: number
+): Promise<Blob> {
+  const width = 'width' in bitmap ? bitmap.width : 0;
+  const height = 'height' in bitmap ? bitmap.height : 0;
+  if (!width || !height) throw new Error('La imagen no tiene dimensiones legibles');
+
+  const scale = Math.min(1, maxSide / Math.max(width, height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(width * scale);
+  canvas.height = Math.round(height * scale);
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('El navegador no pudo procesar la imagen');
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(bitmap as CanvasImageSource, 0, 0, canvas.width, canvas.height);
+
+  return canvasToBlob(canvas, 'image/jpeg', quality);
+}
+
 /**
- * Reduce la foto para que su lado mayor no pase de `maxSide` y la convierte
- * a JPEG. Si el navegador no puede procesarla, devuelve el archivo original.
+ * Prepara la foto para subirla: la reescala y la pasa a JPEG.
+ *
+ * Devuelve también una miniatura. Es lo que hace que el árbol y la galería
+ * carguen rápido: ahí las fotos se ven a ~200px, no tiene sentido bajar la de
+ * 2000px sólo para encogerla.
+ *
+ * Si el navegador no puede convertir la imagen (típico con HEIC del iPhone
+ * fuera de Safari), lanza un error en vez de subir un archivo que luego no se
+ * vería. Antes se subía igual y la foto aparecía rota.
  */
 export async function prepareUpload(
   file: File,
-  maxSide = 2200,
-  quality = 0.88
-): Promise<{ blob: Blob; contentType: string; extension: string }> {
+  maxSide = 2000,
+  quality = 0.85
+): Promise<{ full: Blob; thumb: Blob | null; contentType: string; extension: string }> {
+  let bitmap: ImageBitmap | HTMLImageElement | null = null;
+
   try {
-    const bitmap = await loadBitmap(file);
-    const width = 'width' in bitmap ? bitmap.width : 0;
-    const height = 'height' in bitmap ? bitmap.height : 0;
-    if (!width || !height) throw new Error('sin dimensiones');
+    bitmap = await loadBitmap(file);
+    const full = await toJpeg(bitmap, maxSide, quality);
 
-    const scale = Math.min(1, maxSide / Math.max(width, height));
-    const targetW = Math.round(width * scale);
-    const targetH = Math.round(height * scale);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = targetW;
-    canvas.height = targetH;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('sin canvas');
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(bitmap as CanvasImageSource, 0, 0, targetW, targetH);
-
-    const blob = await canvasToBlob(canvas, 'image/jpeg', quality);
-    if ('close' in bitmap) bitmap.close();
-
-    // Si el "procesado" salió más pesado que el original, nos quedamos el original.
-    if (blob.size >= file.size && scale === 1) {
-      return { blob: file, contentType: file.type || 'image/jpeg', extension: 'jpg' };
+    // La miniatura se genera del mismo bitmap: no se decodifica dos veces.
+    let thumb: Blob | null = null;
+    try {
+      thumb = await toJpeg(bitmap, 640, 0.7);
+    } catch {
+      // Sin miniatura la app sigue funcionando: usa la grande.
     }
-    return { blob, contentType: 'image/jpeg', extension: 'jpg' };
-  } catch {
-    return { blob: file, contentType: file.type || 'image/jpeg', extension: 'jpg' };
+
+    return { full, thumb, contentType: 'image/jpeg', extension: 'jpg' };
+  } catch (err) {
+    // No se pudo convertir. Si el formato original es visible en la web, se
+    // sube tal cual; si no (HEIC), mejor avisar que subir algo roto.
+    const type = (file.type || '').toLowerCase();
+
+    if (WEB_SAFE.includes(type)) {
+      return {
+        full: file,
+        thumb: null,
+        contentType: type,
+        extension: type.split('/')[1].replace('jpeg', 'jpg'),
+      };
+    }
+
+    if (type.includes('heic') || type.includes('heif')) {
+      throw new Error(
+        'Esa foto está en formato HEIC y este navegador no puede convertirla. ' +
+          'En el iPhone: Ajustes → Cámara → Formatos → "Más compatible", o ' +
+          'compártela primero por WhatsApp y sube esa copia.'
+      );
+    }
+
+    throw new Error(
+      err instanceof Error && err.message
+        ? err.message
+        : 'No se pudo leer esa imagen. Prueba con otra.'
+    );
+  } finally {
+    if (bitmap && 'close' in bitmap) bitmap.close();
   }
 }
 

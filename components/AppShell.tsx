@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Icon, { type IconName } from '@/components/Icon';
+import { APP_VERSION } from '@/lib/version';
 
 const TABS: { href: string; label: string; icon: IconName }[] = [
   { href: '/arbol', label: 'El Árbol', icon: 'account_tree' },
@@ -29,20 +30,24 @@ export default function AppShell({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <div className="leather-texture vignette-inset relative min-h-[100dvh] w-full overflow-x-hidden pb-24">
+    <div className="leather-texture vignette-inset pb-bottom-nav relative min-h-[100dvh] w-full overflow-x-hidden">
       {/* ── Barra superior ─────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 flex h-16 w-full items-center justify-between border-b border-outline-variant/30 bg-leather-deep px-edge-wear-safe shadow-[0_10px_30px_-15px_rgba(61,43,31,0.6)]">
+      <header className="h-header px-edge-safe sticky top-0 z-50 flex w-full items-center justify-between border-b border-outline-variant/30 bg-leather-deep shadow-[0_10px_30px_-15px_rgba(61,43,31,0.6)]">
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
           aria-label="Abrir menú"
-          className="flex h-12 w-12 items-center justify-center text-on-surface-variant transition-colors hover:text-bronze-accent active:scale-95 active:opacity-80"
+          className="flex h-12 w-12 shrink-0 items-center justify-center text-on-surface-variant transition-colors hover:text-bronze-accent active:scale-95 active:opacity-80"
         >
           <Icon name="menu" weight={200} />
         </button>
 
-        <Link href="/arbol" className="flex items-center gap-3">
-          <h1 className="font-headline-md text-headline-md-mobile italic tracking-tight text-tarnished-brass md:text-headline-md">
+        <Link href="/arbol" className="flex min-w-0 flex-1 justify-center px-2">
+          {/* clamp: se encoge en pantallas estrechas antes que desbordar */}
+          <h1
+            className="truncate font-headline-md italic tracking-tight text-tarnished-brass"
+            style={{ fontSize: 'clamp(1.125rem, 5.5vw, 1.75rem)', lineHeight: 1.3 }}
+          >
             Nuestro Árbol
           </h1>
         </Link>
@@ -50,7 +55,7 @@ export default function AppShell({
         <Link
           href="/ajustes"
           aria-label="Ajustes"
-          className="flex h-12 w-12 items-center justify-center transition-colors active:scale-95 active:opacity-80"
+          className="flex h-12 w-12 shrink-0 items-center justify-center transition-colors active:scale-95 active:opacity-80"
         >
           <span className="polaroid-frame block h-9 w-9 overflow-hidden rounded-circle border border-outline-variant p-[2px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -78,7 +83,7 @@ export default function AppShell({
               onClick={() => setDrawerOpen(false)}
             />
             <motion.nav
-              className="fixed inset-y-0 left-0 z-[80] flex h-full w-80 max-w-[85vw] flex-col rounded-r-lg bg-surface-container p-6 shadow-2xl shadow-sepia-shadow"
+              className="pt-safe pb-safe fixed inset-y-0 left-0 z-[80] flex h-full w-80 max-w-[85vw] flex-col rounded-r-lg bg-surface-container px-6 py-6 shadow-2xl shadow-sepia-shadow"
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
@@ -119,16 +124,21 @@ export default function AppShell({
                 })}
               </ul>
 
-              <p className="border-t border-outline-variant/20 pt-6 font-body-sm text-body-sm italic text-outline/40">
-                Nuestro álbum de recuerdos.
-              </p>
+              <div className="flex items-baseline justify-between gap-3 border-t border-outline-variant/20 pt-6">
+                <p className="font-body-sm text-body-sm italic text-outline/40">
+                  Nuestro álbum de recuerdos.
+                </p>
+                <span className="shrink-0 font-label-caps text-label-caps uppercase tracking-wider text-outline/30">
+                  v{APP_VERSION}
+                </span>
+              </div>
             </motion.nav>
           </>
         )}
       </AnimatePresence>
 
       {/* ── Navegación inferior ────────────────────────────────────────── */}
-      <nav className="fixed bottom-0 z-50 flex h-20 w-full items-center justify-around border-t border-outline-variant/20 bg-leather-deep px-4 pb-2 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
+      <nav className="h-bottom-nav fixed bottom-0 z-50 flex w-full items-center justify-around border-t border-outline-variant/20 bg-leather-deep px-4 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
         <div className="mx-auto flex w-full max-w-md items-center justify-around">
           {TABS.map((tab) => {
             const active = pathname.startsWith(tab.href);

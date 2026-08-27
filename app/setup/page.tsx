@@ -11,14 +11,18 @@ export const metadata = { title: 'Falta configurar · Nuestro Árbol' };
 export default function SetupPage() {
   const { missing } = checkEnv();
 
+  // En Vercel las instrucciones son otras: no hay .env.local que crear, y
+  // hace falta volver a desplegar para que el build recoja las variables.
+  const onVercel = Boolean(process.env.VERCEL);
+
   const steps: { variable: string; where: string }[] = [
     {
       variable: 'NEXT_PUBLIC_SUPABASE_URL',
-      where: 'Supabase → Project Settings → API → Project URL',
+      where: 'Supabase → Project Settings → Data API → Project URL',
     },
     {
       variable: 'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-      where: 'Supabase → Project Settings → API → anon public',
+      where: 'Supabase → Project Settings → API Keys → anon public',
     },
   ];
 
@@ -38,8 +42,17 @@ export default function SetupPage() {
           </h1>
           <div className="mx-auto my-5 h-px w-24 bg-tarnished-brass opacity-60" />
           <p className="text-center font-body-md text-body-md italic text-dried-ink opacity-75">
-            Crea el archivo <code className="not-italic">.env.local</code> en la raíz del
-            proyecto y vuelve a arrancar <code className="not-italic">npm run dev</code>.
+            {onVercel ? (
+              <>
+                Añádelas en <span className="not-italic">Vercel → Settings → Environment
+                Variables</span> y vuelve a desplegar.
+              </>
+            ) : (
+              <>
+                Crea el archivo <code className="not-italic">.env.local</code> en la raíz del
+                proyecto y vuelve a arrancar <code className="not-italic">npm run dev</code>.
+              </>
+            )}
           </p>
 
           <ul className="mt-8 space-y-5">
@@ -66,15 +79,35 @@ export default function SetupPage() {
           </ul>
 
           <div className="mt-8 border-t border-dried-ink/20 pt-6">
-            <p className="font-label-caps text-label-caps uppercase tracking-wider text-dried-ink opacity-60">
-              Atajo
-            </p>
-            <pre className="mt-3 overflow-x-auto bg-dried-ink/10 p-3 font-body-sm text-body-sm text-dried-ink">
-              <code>cp .env.example .env.local</code>
-            </pre>
-            <p className="mt-3 font-body-sm text-body-sm italic text-dried-ink opacity-60">
-              Los pasos completos de Supabase están en el <code className="not-italic">README.md</code>.
-            </p>
+            {onVercel ? (
+              <>
+                <p className="font-label-caps text-label-caps uppercase tracking-wider text-dried-ink opacity-60">
+                  Importante
+                </p>
+                <p className="mt-3 font-body-sm text-body-sm italic text-dried-ink opacity-70">
+                  Estas variables se incrustan durante el build, no se leen al
+                  arrancar. Si ya las añadiste y sigues viendo esta pantalla, es
+                  que falta volver a desplegar:
+                </p>
+                <p className="mt-3 font-body-sm text-body-sm text-dried-ink opacity-80">
+                  Deployments → el último → ⋯ → <strong>Redeploy</strong>,
+                  desmarcando <em>Use existing Build Cache</em>.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-label-caps text-label-caps uppercase tracking-wider text-dried-ink opacity-60">
+                  Atajo
+                </p>
+                <pre className="mt-3 overflow-x-auto bg-dried-ink/10 p-3 font-body-sm text-body-sm text-dried-ink">
+                  <code>cp .env.example .env.local</code>
+                </pre>
+                <p className="mt-3 font-body-sm text-body-sm italic text-dried-ink opacity-60">
+                  Los pasos completos están en el{' '}
+                  <code className="not-italic">README.md</code>.
+                </p>
+              </>
+            )}
           </div>
         </div>
 

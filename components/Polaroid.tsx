@@ -1,11 +1,9 @@
 import { stableRotation } from '@/lib/utils';
+import PhotoImage from '@/components/PhotoImage';
 
 /**
  * Foto impresa: marco crema, sombra proyectada, ligera rotación estable
  * y el tratamiento sepia del diseño.
- *
- * Se usa <img> y no next/image a propósito: las URLs de Supabase van firmadas
- * y caducan, así que no tiene sentido pasarlas por el optimizador.
  */
 export default function Polaroid({
   src,
@@ -47,12 +45,10 @@ export default function Polaroid({
       )}
 
       <div className={`polaroid-img-container ${aspect}`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <PhotoImage
           src={src}
           alt={caption ?? 'Recuerdo'}
-          loading={priority ? 'eager' : 'lazy'}
-          decoding="async"
+          priority={priority}
           className="photo-vintage h-full w-full object-cover"
         />
       </div>

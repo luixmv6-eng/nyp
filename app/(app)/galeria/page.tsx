@@ -22,7 +22,7 @@ export default async function GaleriaPage() {
     <>
       <div className="vignette-overlay" />
 
-      <main className="relative z-10 mx-auto max-w-5xl px-4 pb-24 pt-8 md:px-page-margin">
+      <main className="relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-8 md:px-page-margin">
         <div className="paper-layer relative min-h-[60vh] rounded-sm p-6 md:p-12">
           {photos.length === 0 ? (
             <div className="flex min-h-[50vh] flex-col items-center justify-center text-center">
@@ -63,7 +63,7 @@ export default async function GaleriaPage() {
                       className="block transition-transform duration-300 hover:z-30 hover:scale-105 active:scale-95"
                     >
                       <Polaroid
-                        src={photo.signedUrl}
+                        src={photo.thumbUrl}
                         seed={photo.id}
                         caption={photo.caption?.trim() || formatLongDate(photo.photo_date)}
                         brackets={index % 3 === 0 ? 'diagonal' : 'none'}

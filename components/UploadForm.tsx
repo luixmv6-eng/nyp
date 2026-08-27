@@ -52,15 +52,30 @@ export default function UploadForm() {
     const supabase = createClient();
 
     try {
-      // 1. Aligeramos la imagen en el navegador.
-      const { blob, contentType, extension } = await prepareUpload(file);
+      // 1. Reescalamos en el navegador y sacamos también la miniatura.
+      const { full, thumb, contentType, extension } = await prepareUpload(file);
 
-      // 2. La guardamos en el bucket privado.
-      const path = `album/${crypto.randomUUID()}.${extension}`;
+      // 2. Las guardamos en el bucket. La miniatura va al lado de la grande,
+      //    con el sufijo _thumb, que es como la busca lib/photos.ts.
+      const id = crypto.randomUUID();
+      const path = `album/${id}.${extension}`;
+
+      // cacheControl alto: el archivo nunca cambia, sólo cambia su firma.
       const { error: uploadError } = await supabase.storage
         .from('photos')
-        .upload(path, blob, { contentType, cacheControl: '3600', upsert: false });
+        .upload(path, full, { contentType, cacheControl: '31536000', upsert: false });
       if (uploadError) throw uploadError;
+
+      if (thumb) {
+        // Si falla la miniatura no abortamos: la app usará la foto grande.
+        await supabase.storage
+          .from('photos')
+          .upload(`album/${id}_thumb.jpg`, thumb, {
+            contentType: 'image/jpeg',
+            cacheControl: '31536000',
+            upsert: false,
+          });
+      }
 
       // 3. Y anotamos el recuerdo en la tabla.
       const { error: insertError } = await supabase.from('photos').insert({

@@ -201,6 +201,22 @@ supabase/schema.sql       Todo el backend en un archivo
 scripts/generate-icons.mjs
 ```
 
+## Cómo se cargan rápido las fotos
+
+Tres detalles que no son obvios leyendo el código:
+
+1. **Cada foto se guarda dos veces.** Al subirla, el navegador genera la grande
+   (máx. 2000 px) y una miniatura de 640 px que va al lado con el sufijo
+   `_thumb`. El árbol y la galería usan la miniatura; la grande sólo se baja al
+   abrir el detalle.
+2. **Las URLs firmadas se cachean.** Supabase genera una firma distinta cada vez
+   que se le pide, así que sin caché el navegador volvería a descargar todas las
+   fotos en cada navegación. `lib/photos.ts` las cachea 4 horas (la firma dura
+   6) para que la URL sea estable y el navegador reutilice lo ya descargado.
+3. **Las fotos anteriores a esto no tienen miniatura.** No pasa nada: si el
+   `_thumb` no existe, se usa la grande. Si quieres que también vayan ligeras,
+   vuelve a subirlas.
+
 ## El logo de la app
 
 En **Ajustes del Libro** eliges una imagen del dispositivo. El navegador la
